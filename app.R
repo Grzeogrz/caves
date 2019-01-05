@@ -6,7 +6,13 @@
 #
 #    http://shiny.rstudio.com/
 #
+package_vector = c("shiny", "leaflet", "shinydashboard", "plyr")
+install.packages(package_vector)
 
+library(shiny)
+library(leaflet)
+library(shinydashboard)
+library(plyr)
 
 ###########################################################################################################################
 caves <- read.csv(file="/home/grzegorz/ED/csvUTF8.csv", header=TRUE, sep=";")
@@ -98,6 +104,10 @@ convertPuwgToWgs <- function(Xpuwg, Ypuwg){
   return(WGS)
 }
 
+#tworzenie mapy
+m <- leaflet()
+#dodawanie warstwy
+m <- addTiles(m)
 
 #zamian współrzędnych w data frame
 for (i in 1:length(caves$Name)) {
@@ -105,3 +115,38 @@ for (i in 1:length(caves$Name)) {
   caves$x_1992[i] <- coordinates[1]
   caves$y_1992[i] <- coordinates[2]
 }
+###########################################################################################################################
+
+# Define UI for application that draws a histogram
+
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Jaskinie Polski"),
+  dashboardSidebar(),
+  dashboardBody(
+    tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
+    leafletOutput("mymap")
+  )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  
+  data <- reactive({
+    x <- caves
+  })
+   
+   output$mymap <- renderLeaflet({
+     caves <- data()
+     
+     m <- leaflet(data = caves) %>%
+       addTiles() %>%
+       addMarkers(lng = ~y_1992,
+                  lat = ~x_1992,
+                  popup = paste("Nazwa:", caves$Name, "<br>", "Długość:", caves$Length, "<br>", "Głębokość:", caves$Depth, "<br>","Właściciel:", caves$Owner, "<br>", "Osuwiskowa:", caves$Osuwiskowa))
+   })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
