@@ -7,15 +7,18 @@
 #    http://shiny.rstudio.com/
 #
 package_vector = c("shiny", "leaflet", "shinydashboard", "plyr")
-install.packages(package_vector)
+#install.packages(package_vector)
 
 library(shiny)
 library(leaflet)
 library(shinydashboard)
 library(plyr)
+library(RCurl)
 
 ###########################################################################################################################
-caves <- read.csv(file="/home/grzegorz/ED/csvUTF8.csv", header=TRUE, sep=";")
+#caves <- read.csv(file="/home/grzegorz/ED/csvUTF8.csv", header=TRUE, sep=";")
+x <- getURL("https://raw.githubusercontent.com/Grzeogrz/caves/master/csvUTF8.csv")
+caves <- read.csv(text = x, header=TRUE, sep=";")
 
 #zmiana nazw kolumn
 colnames(caves)[colnames(caves)=="NR_INWENT.C.50"] <- "Numer_Inwentażowy"
@@ -44,6 +47,9 @@ options(digits=9)
 #zamiana współrzędnych z danych teksotwych na numeryczne
 caves$x_1992 <- as.numeric(caves$x_1992)
 caves$y_1992 <- as.numeric(caves$y_1992)
+
+#odfiltruj jaskinie bez głębkości i długości
+caves <- subset(caves, Length!="0" & Depth!=0)
 
 #funkcja do przekształcania współrzędnych PUWG na WGS84
 convertPuwgToWgs <- function(Xpuwg, Ypuwg){
