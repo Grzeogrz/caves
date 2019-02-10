@@ -49,7 +49,7 @@ caves$x_1992 <- as.numeric(caves$x_1992)
 caves$y_1992 <- as.numeric(caves$y_1992)
 
 #odfiltruj jaskinie bez głębkości i długości
-caves <- subset(caves, Length!="0" & Depth!=0)
+#caves <- subset(caves, Length!="0" & Depth!=0)
 
 #funkcja do przekształcania współrzędnych PUWG na WGS84
 convertPuwgToWgs <- function(Xpuwg, Ypuwg){
@@ -130,8 +130,7 @@ ui <- dashboardPage(
   dashboardHeader(title = "Jaskinie Polski"),
   dashboardSidebar(),
   dashboardBody(
-    tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
-    leafletOutput("mymap")
+    leafletOutput("mymap", height = "95vh")
   )
 )
 
@@ -155,4 +154,5 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
 
