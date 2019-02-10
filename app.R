@@ -8,6 +8,8 @@
 #
 package_vector = c("shiny", "leaflet", "shinydashboard", "plyr")
 #install.packages(package_vector)
+#install.packages('rsconnect')
+#library(rsconnect)
 
 library(shiny)
 library(leaflet)
